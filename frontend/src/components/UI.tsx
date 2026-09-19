@@ -152,10 +152,12 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({ title, subtitle, a
 
 export const Card: React.FC<{
   children: React.ReactNode;
+  title?: string;
   style?: React.CSSProperties;
   className?: string;
-}> = ({ children, style, className }) => (
+}> = ({ children, title, style, className }) => (
   <div className={`soc-card ${className || ''}`} style={{ padding: 18, ...style }}>
+    {title && <h3 style={{ margin: '0 0 12px 0', fontSize: 14, fontWeight: 600 }}>{title}</h3>}
     {children}
   </div>
 );

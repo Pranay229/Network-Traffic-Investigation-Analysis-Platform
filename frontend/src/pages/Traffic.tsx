@@ -226,7 +226,7 @@ export const TrafficAnalysis: React.FC = () => {
                 <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>
                   Real Traffic Activity Analysis & Flow Dynamics
                 </span>
-                {trafficActivity.summary?.high_traffic_flows_count > 0 && (
+                {(trafficActivity.summary?.high_traffic_flows_count ?? 0) > 0 && (
                   <span style={{
                     fontSize: 10.5,
                     fontWeight: 700,
@@ -255,7 +255,7 @@ export const TrafficAnalysis: React.FC = () => {
           </div>
 
           {/* High Traffic Advisory Banner if triggered */}
-          {trafficActivity.summary?.high_traffic_flows_count > 0 && (
+          {(trafficActivity.summary?.high_traffic_flows_count ?? 0) > 0 && (
             <div style={{
               margin: '12px 18px 0',
               padding: '10px 14px',

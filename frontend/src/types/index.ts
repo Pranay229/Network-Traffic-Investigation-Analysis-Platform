@@ -15,7 +15,7 @@ export interface User {
   is_active: boolean;
   is_email_verified: boolean;
   created_at: string;
-  last_login_at: string | null;
+  last_login_at?: string | null;
 }
 
 export interface AdminUser extends User {
@@ -141,6 +141,7 @@ export interface Conversation {
   syn_count: number;
   rst_count: number;
   fin_count: number;
+  bytes_per_second?: number;
 }
 
 export interface DNSRecord {
@@ -189,6 +190,9 @@ export interface Alert {
   recommendations: string | null;
   status: AlertStatus;
   created_at: string;
+  title?: string;
+  category?: string;
+  rule_id?: string;
 }
 
 export interface IOC {
@@ -203,16 +207,38 @@ export interface IOC {
 }
 
 export interface TimelineEvent {
-  type: 'packet' | 'alert';
+  id?: number | string;
+  event_id?: string;
   timestamp: number | null;
-  timestamp_str: string | null;
-  src_ip: string | null;
-  dst_ip: string | null;
-  protocol: string | null;
-  src_port: number | null;
-  dst_port: number | null;
+  timestamp_str?: string | null;
+  type?: 'packet' | 'alert' | string | null;
+  event_type?: string | null;
+  severity?: AlertSeverity | ScanRiskLevel | string | null;
+  source_ip?: string | null;
+  destination_ip?: string | null;
+  src_ip?: string | null;
+  dst_ip?: string | null;
+  source_port?: number | null;
+  destination_port?: number | null;
+  src_port?: number | null;
+  dst_port?: number | null;
+  protocol?: string | null;
+  short_explanation?: string;
   description: string;
-  severity: AlertSeverity | null;
+  observation?: string;
+  analysis?: string;
+  recommendation?: string;
+  why_it_matters?: string;
+  recommended_step?: string;
+  evidence?: any;
+  packet_count?: number;
+  total_bytes?: number;
+  bytes?: number;
+  duration?: number;
+  duration_seconds?: number;
+  packets_per_second?: number;
+  bytes_per_second?: number;
+  [key: string]: any;
 }
 
 export interface OverviewData {
@@ -417,6 +443,9 @@ export interface ScanRecord {
   open_ports_count: number;
   services_count: number;
   potential_findings_count: number;
+  hosts_count?: number;
+  ports_count?: number;
+  findings_count?: number;
   highest_severity?: ScanRiskLevel;
   created_at?: string;
   results?: ScanResultsData;
@@ -442,51 +471,30 @@ export interface ScanEvent {
   evidence?: Record<string, unknown>;
 }
 
-export interface TimelineEvent {
-  id?: number | string;
-  event_id?: string;
-  timestamp: number;
-  timestamp_str?: string;
-  type?: string;
-  event_type?: string;
-  severity?: string | null;
-  source_ip?: string | null;
-  destination_ip?: string | null;
-  src_ip?: string | null;
-  dst_ip?: string | null;
-  src_port?: number | null;
-  dst_port?: number | null;
-  protocol?: string | null;
-  short_explanation?: string;
-  description: string;
-  observation?: string;
-  analysis?: string;
-  recommendation?: string;
-  evidence?: Record<string, unknown>;
-  packet_count?: number;
-  total_bytes?: number;
-  duration?: number;
-  packets_per_second?: number;
-  bytes_per_second?: number;
-}
-
 export interface TrafficFlow {
   source_ip: string;
   destination_ip: string;
+  src_ip?: string;
+  dst_ip?: string;
   source_port?: number | null;
   destination_port?: number | null;
+  src_port?: number | null;
+  dst_port?: number | null;
   protocol: string;
   first_observed: number;
   first_observed_str: string;
   last_observed: number;
   last_observed_str: string;
   duration: number;
+  duration_seconds?: number;
   packet_count: number;
   total_bytes: number;
   total_bytes_str: string;
   packets_per_second: number;
   bytes_per_second: number;
   average_rate_str: string;
+  is_high_traffic?: boolean;
+  [key: string]: any;
 }
 
 export interface TrafficActivityResponse {
@@ -499,12 +507,14 @@ export interface TrafficActivityResponse {
     bytes_per_second: number;
     average_throughput_str: string;
     high_traffic_events_count: number;
+    high_traffic_flows_count?: number;
     first_observed: number;
     first_observed_str: string;
     last_observed: number;
     last_observed_str: string;
   };
   top_flows: TrafficFlow[];
+  flows?: TrafficFlow[];
   thresholds: {
     high_packet_rate: number;
     high_byte_rate: number;

@@ -811,7 +811,7 @@ export const NetworkScanner: React.FC = () => {
                             width: 10,
                             height: 10,
                             borderRadius: '50%',
-                            background: ev.severity === 'high' || ev.severity === 'critical' ? 'var(--danger)' : ev.severity === 'medium' ? 'var(--warning)' : 'var(--accent)',
+                            background: String(ev.severity || '').toLowerCase() === 'high' || String(ev.severity || '').toLowerCase() === 'critical' ? 'var(--danger)' : String(ev.severity || '').toLowerCase() === 'medium' ? 'var(--warning)' : 'var(--accent)',
                             border: '2px solid var(--bg-card)',
                           }}
                         />
@@ -839,7 +839,7 @@ export const NetworkScanner: React.FC = () => {
                               >
                                 {ev.event_type}
                               </span>
-                              {ev.severity && <SeverityBadge severity={ev.severity.toLowerCase() as any} />}
+                              {ev.severity && <SeverityBadge severity={String(ev.severity).toLowerCase() as any} />}
                               {ev.source_ip && (
                                 <span style={{ fontSize: 11, fontFamily: 'JetBrains Mono', color: 'var(--text-muted)' }}>
                                   {ev.source_ip}{ev.destination_port ? `:${ev.destination_port}` : ''}
@@ -865,7 +865,7 @@ export const NetworkScanner: React.FC = () => {
                                 borderRadius: 4,
                               }}
                             >
-                              Evidence: {ev.evidence}
+                              Evidence: {typeof ev.evidence === 'object' ? JSON.stringify(ev.evidence) : String(ev.evidence)}
                             </div>
                           )}
                         </div>

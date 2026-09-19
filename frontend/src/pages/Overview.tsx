@@ -381,9 +381,9 @@ export const Overview: React.FC = () => {
           />
           <KPICard
             label="High/Critical Events"
-            value={recentAlerts.filter(a => a.severity === 'high' || a.severity === 'critical').length}
+            value={recentAlerts.filter(a => String(a.severity || '').toLowerCase() === 'high' || String(a.severity || '').toLowerCase() === 'critical').length}
             icon={<AlertTriangle size={16} />}
-            color={recentAlerts.filter(a => a.severity === 'high' || a.severity === 'critical').length > 0 ? '#ef4444' : '#10b981'}
+            color={recentAlerts.filter(a => String(a.severity || '').toLowerCase() === 'high' || String(a.severity || '').toLowerCase() === 'critical').length > 0 ? '#ef4444' : '#10b981'}
             subtitle="Elevated priority"
           />
           <KPICard

@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Wifi, RefreshCw, Activity, Layers, TrendingUp, AlertTriangle, ArrowRight, ShieldCheck, Clock } from 'lucide-react';
+import { Wifi, RefreshCw, Activity, Layers, TrendingUp, AlertTriangle, ArrowRight } from 'lucide-react';
 import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   AreaChart, Area, Cell, PieChart, Pie,
 } from 'recharts';
 import { SectionHeader, Card, KPICard, EmptyState, LoadingSpinner, Drawer } from '../components/UI';
-import { SeverityBadge, ProtoChip } from '../components/Badges';
+import { ProtoChip } from '../components/Badges';
 import { getProtocols, getTrafficActivity } from '../services/api';
 import type { TrafficActivityResponse, TrafficFlow } from '../types';
 import {
-  formatLocalDateTime, formatPreciseTimestamp, formatDuration, formatByteSize, formatRate
+  formatLocalDateTime, formatDuration, formatByteSize, formatRate
 } from '../utils/time';
 
 const PROTO_COLORS: Record<string, string> = {

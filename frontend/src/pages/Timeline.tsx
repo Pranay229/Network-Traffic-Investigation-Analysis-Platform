@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   Clock, RefreshCw, Radio, Globe, Server, Terminal, AlertTriangle,
-  Filter, Search, ShieldAlert, Activity, ArrowRight, ExternalLink, Info
+  Search, Activity, ArrowRight
 } from 'lucide-react';
 import { SectionHeader, Card, EmptyState, LoadingSpinner, Drawer } from '../components/UI';
 import { SeverityBadge, ProtoChip } from '../components/Badges';

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Layers, Search, Filter, Shield, AlertTriangle, RefreshCw,
-  Server, Globe, Terminal, FileCode, CheckCircle2, Info
+  Layers, Search, Shield, AlertTriangle, RefreshCw,
+  Server, Globe, Terminal, CheckCircle2, Info
 } from 'lucide-react';
 import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Cell
@@ -11,7 +11,7 @@ import {
   getInvestigationProtocols, getInvestigationARP, getInvestigationTLS, formatBytes
 } from '../services/api';
 import type {
-  ProtocolAnalysisResponse, ProtocolDistributionItem, ARPRecordItem, TLSMetadataItem
+  ProtocolAnalysisResponse, ARPRecordItem, TLSMetadataItem
 } from '../types';
 
 const PROTO_COLORS: Record<string, string> = {

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { MessageSquare, RefreshCw, ArrowRight } from 'lucide-react';
+import { MessageSquare, RefreshCw } from 'lucide-react';
 import { SectionHeader, Card, EmptyState, LoadingSpinner, Pagination } from '../components/UI';
 import { ProtoChip } from '../components/Badges';
-import { getConversations, formatBytes } from '../services/api';
+import { getConversations } from '../services/api';
 import type { Conversation } from '../types';
 import { formatLocalDateTime, formatDuration, formatByteSize, formatRate } from '../utils/time';
 

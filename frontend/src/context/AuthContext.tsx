@@ -25,6 +25,7 @@ const DEFAULT_USER: User = {
   is_active: true,
   is_email_verified: true,
   created_at: '2026-01-01T00:00:00Z',
+  last_login_at: null,
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);

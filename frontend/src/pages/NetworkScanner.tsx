@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   Radar, Search, Download, FileText, RefreshCw, AlertTriangle,
   CheckCircle2, Info, Eye, HelpCircle, BookOpen, Layers,
-  Terminal, Globe, Server, Lock, X, ShieldCheck, Clock, History, Calendar, Play
+  Terminal, Globe, Server, Lock, X, ShieldCheck, Clock, History
 } from 'lucide-react';
 import { SectionHeader, Card, KPICard, EmptyState, LoadingSpinner, Drawer } from '../components/UI';
 import { SeverityBadge, ProtoChip } from '../components/Badges';
@@ -13,7 +13,7 @@ import type {
   ScanRecord, ScanResultsData, ScanPortItem, ScanEvent
 } from '../types';
 import {
-  formatLocalDateTime, formatDuration, formatPreciseTimestamp, getLocalTimezoneName
+  formatLocalDateTime, formatDuration, getLocalTimezoneName
 } from '../utils/time';
 
 export const NetworkScanner: React.FC = () => {

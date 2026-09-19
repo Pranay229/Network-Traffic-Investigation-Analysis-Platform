@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   FolderOpen, Trash2, Eye, RefreshCw, Upload, FileCode,
-  MessageSquare, Plus, CheckCircle2, AlertTriangle, Shield, Clock, Send
+  MessageSquare, Send
 } from 'lucide-react';
 import { SectionHeader, Card, EmptyState, LoadingSpinner, ConfirmModal } from '../components/UI';
-import { StatusBadge, SeverityBadge } from '../components/Badges';
+import { SeverityBadge } from '../components/Badges';
 import {
   getInvestigations, deleteInvestigation, updateInvestigationStatus, addInvestigationNote, formatBytes
 } from '../services/api';
-import type { Investigation, AnalystNote } from '../types';
+import type { Investigation } from '../types';
 
 const WORKFLOW_STATUSES: Array<'OPEN' | 'INVESTIGATING' | 'CONTAINED' | 'RESOLVED' | 'CLOSED'> = [
   'OPEN', 'INVESTIGATING', 'CONTAINED', 'RESOLVED', 'CLOSED'

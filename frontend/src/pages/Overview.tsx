@@ -13,7 +13,7 @@ import { KPICard, SectionHeader, Card, LoadingSpinner, EmptyState } from '../com
 import { SeverityBadge, StatusBadge } from '../components/Badges';
 import { getOverview, getInvestigations, getAlerts, formatBytes, getScans, getIOCs } from '../services/api';
 import type { OverviewData, Investigation, Alert, ScanRecord } from '../types';
-import { formatLocalDateTime, formatRelativeTime } from '../utils/time';
+import { formatLocalDateTime } from '../utils/time';
 
 const PROTO_COLORS: Record<string, string> = {
   TCP: '#3b82f6',

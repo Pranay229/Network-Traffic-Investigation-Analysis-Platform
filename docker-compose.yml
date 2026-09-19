@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  ntia-platform:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ntia-platform:latest
+    container_name: ntia-platform
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - HOST=0.0.0.0
+      - DEBUG=false
+      - MAX_UPLOAD_SIZE_MB=500
+    volumes:
+      - ntia_data:/app/backend/data
+
+volumes:
+  ntia_data:

@@ -1,0 +1,61 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Environment
+.env
+*.env.local
+
+# Database
+*.db
+*.db-shm
+*.db-wal
+*.sqlite3
+data/
+backend/data/
+
+# Node
+node_modules/
+dist/
+*.local
+.DS_Store
+*.tsbuildinfo
+
+# Frontend build
+frontend/dist/
+frontend/.vite/
+
+# PCAPs (don't commit captures)
+pcaps/*.pcap
+pcaps/*.pcapng
+
+# Reports (generated)
+reports/*.md
+reports/*.pdf
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Temporary scratch files
+scratch/

@@ -7,7 +7,7 @@ import { StatusBadge } from './Badges';
 import { LoadingSpinner } from './UI';
 import { GlobalSearchModal } from './GlobalSearchModal';
 import type { Investigation } from '../types';
-import { getInvestigations } from '../services/api';
+import { getInvestigations, checkHealth } from '../services/api';
 
 interface TopNavProps {
   onMobileMenuToggle?: () => void;
@@ -64,8 +64,8 @@ export const TopNav: React.FC<TopNavProps> = ({ onMobileMenuToggle }) => {
 
   const checkBackend = async () => {
     try {
-      const res = await fetch('/api/health');
-      setBackendOk(res.ok);
+      const res = await checkHealth();
+      setBackendOk(Boolean(res && (res.status === 'ok' || res.status === 'healthy')));
     } catch {
       setBackendOk(false);
     }

@@ -68,7 +68,10 @@ export const UploadPage: React.FC = () => {
       setTimeout(() => setStage('complete'), 2400);
     } catch (err: any) {
       setStage('error');
-      const msg = err?.response?.data?.detail || 'Failed to upload PCAP. Please verify file integrity and server status.';
+      const isHtmlErr = err?.message?.includes('HTML document instead of JSON') || err?.message?.includes('Network Error');
+      const msg = isHtmlErr
+        ? 'Backend API is unreachable. Please ensure the Python backend service is running and VITE_API_URL is configured in Netlify.'
+        : (err?.response?.data?.detail || err?.message || 'Failed to upload PCAP. Please verify backend server status.');
       setError(typeof msg === 'string' ? msg : JSON.stringify(msg));
     }
   };

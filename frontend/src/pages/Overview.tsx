@@ -59,11 +59,18 @@ export const Overview: React.FC = () => {
       setRecentInvs(validInvs);
       setScansList(validScans);
 
-      const targetId = invId || (validInvs.length > 0 ? validInvs[0].inv_id : null);
+      // If backend has no investigations, clear stale local reference
+      if (validInvs.length === 0) {
+        localStorage.removeItem('selected_inv');
+        setData(null);
+        setError(null);
+        return;
+      }
+
+      const currentStoredId = localStorage.getItem('selected_inv') || '';
+      const targetId = (validInvs.some(i => i.inv_id === currentStoredId) ? currentStoredId : null) || validInvs[0].inv_id;
       if (targetId) {
-        if (!invId && validInvs.length > 0) {
-          localStorage.setItem('selected_inv', targetId);
-        }
+        localStorage.setItem('selected_inv', targetId);
         const [overviewData, alertsData, iocData] = await Promise.all([
           getOverview(targetId).catch(() => null),
           getAlerts(targetId).catch(() => []),
@@ -73,6 +80,8 @@ export const Overview: React.FC = () => {
           setData(overviewData);
           setRecentAlerts(Array.isArray(alertsData) ? alertsData : []);
           setIocCount(iocData?.total || 0);
+        } else {
+          setData(null);
         }
       }
       setError(null);
@@ -83,7 +92,7 @@ export const Overview: React.FC = () => {
     }
   };
 
-  if (!invId && (!Array.isArray(recentInvs) || recentInvs.length === 0) && !loading) {
+  if ((recentInvs.length === 0 || !data) && !loading && !error) {
     return (
       <div className="fade-in space-y-6">
         <SectionHeader

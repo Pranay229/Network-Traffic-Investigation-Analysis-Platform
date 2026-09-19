@@ -43,21 +43,22 @@ export const TopNav: React.FC<TopNavProps> = ({ onMobileMenuToggle }) => {
 
   useEffect(() => {
     const saved = localStorage.getItem('selected_inv');
-    if (saved && investigations.length > 0) {
-      const inv = investigations.find((i) => i.inv_id === saved);
+    const list = Array.isArray(investigations) ? investigations : [];
+    if (saved && list.length > 0) {
+      const inv = list.find((i) => i.inv_id === saved);
       if (inv) setSelected(inv);
-    } else if (!saved && investigations.length > 0) {
-      setSelected(investigations[0]);
-      localStorage.setItem('selected_inv', investigations[0].inv_id);
+    } else if (!saved && list.length > 0) {
+      setSelected(list[0]);
+      localStorage.setItem('selected_inv', list[0].inv_id);
     }
   }, [investigations]);
 
   const fetchInvestigations = async () => {
     try {
       const data = await getInvestigations();
-      setInvestigations(data);
+      setInvestigations(Array.isArray(data) ? data : []);
     } catch {
-      // Backend not reached or offline
+      setInvestigations([]);
     }
   };
 
@@ -245,7 +246,7 @@ export const TopNav: React.FC<TopNavProps> = ({ onMobileMenuToggle }) => {
                 >
                   Active Investigations
                 </div>
-                {investigations.length === 0 ? (
+                {(!Array.isArray(investigations) || investigations.length === 0) ? (
                   <div style={{ padding: 16, fontSize: 12, color: 'var(--text-muted)', textAlign: 'center' }}>
                     No investigations found.<br />
                     <span

@@ -54,22 +54,26 @@ export const Overview: React.FC = () => {
         getInvestigations().catch(() => []),
         getScans().catch(() => []),
       ]);
-      setRecentInvs(invs);
-      setScansList(scans);
+      const validInvs = Array.isArray(invs) ? invs : [];
+      const validScans = Array.isArray(scans) ? scans : [];
+      setRecentInvs(validInvs);
+      setScansList(validScans);
 
-      const targetId = invId || (invs.length > 0 ? invs[0].inv_id : null);
+      const targetId = invId || (validInvs.length > 0 ? validInvs[0].inv_id : null);
       if (targetId) {
-        if (!invId && invs.length > 0) {
+        if (!invId && validInvs.length > 0) {
           localStorage.setItem('selected_inv', targetId);
         }
         const [overviewData, alertsData, iocData] = await Promise.all([
-          getOverview(targetId),
+          getOverview(targetId).catch(() => null),
           getAlerts(targetId).catch(() => []),
           getIOCs(targetId).catch(() => ({ total: 0, iocs: [] })),
         ]);
-        setData(overviewData);
-        setRecentAlerts(alertsData);
-        setIocCount(iocData?.total || 0);
+        if (overviewData) {
+          setData(overviewData);
+          setRecentAlerts(Array.isArray(alertsData) ? alertsData : []);
+          setIocCount(iocData?.total || 0);
+        }
       }
       setError(null);
     } catch {
@@ -79,7 +83,7 @@ export const Overview: React.FC = () => {
     }
   };
 
-  if (!invId && recentInvs.length === 0 && !loading) {
+  if (!invId && (!Array.isArray(recentInvs) || recentInvs.length === 0) && !loading) {
     return (
       <div className="fade-in space-y-6">
         <SectionHeader
@@ -238,8 +242,10 @@ export const Overview: React.FC = () => {
     color: PROTO_COLORS[p.protocol] || '#64748b',
   }));
 
+  const alertsList = Array.isArray(recentAlerts) ? recentAlerts : [];
+
   return (
-    <div className="fade-in space-y-5">
+    <div className="fade-in space-y-6">
       {/* Top Section Header */}
       <SectionHeader
         title="Security Overview"
@@ -381,9 +387,9 @@ export const Overview: React.FC = () => {
           />
           <KPICard
             label="High/Critical Events"
-            value={recentAlerts.filter(a => String(a.severity || '').toLowerCase() === 'high' || String(a.severity || '').toLowerCase() === 'critical').length}
+            value={alertsList.filter(a => String(a.severity || '').toLowerCase() === 'high' || String(a.severity || '').toLowerCase() === 'critical').length}
             icon={<AlertTriangle size={16} />}
-            color={recentAlerts.filter(a => String(a.severity || '').toLowerCase() === 'high' || String(a.severity || '').toLowerCase() === 'critical').length > 0 ? '#ef4444' : '#10b981'}
+            color={alertsList.filter(a => String(a.severity || '').toLowerCase() === 'high' || String(a.severity || '').toLowerCase() === 'critical').length > 0 ? '#ef4444' : '#10b981'}
             subtitle="Elevated priority"
           />
           <KPICard
@@ -395,16 +401,16 @@ export const Overview: React.FC = () => {
           />
           <KPICard
             label="High Traffic Events"
-            value={recentAlerts.filter(a => (a.title || a.category || '').toLowerCase().includes('traffic') || (a.rule_id || '').includes('NET-002') || (a.rule_id || '').includes('NET-003')).length}
+            value={alertsList.filter(a => (a.title || a.category || '').toLowerCase().includes('traffic') || (a.rule_id || '').includes('NET-002') || (a.rule_id || '').includes('NET-003')).length}
             icon={<TrendingUp size={16} />}
             color="#eab308"
             subtitle="Exceeded thresholds"
           />
           <KPICard
             label="Potential Anomalies"
-            value={recentAlerts.length}
+            value={alertsList.length}
             icon={<Activity size={16} />}
-            color={recentAlerts.length > 0 ? '#ef4444' : '#10b981'}
+            color={alertsList.length > 0 ? '#ef4444' : '#10b981'}
             subtitle="Baseline deviations"
           />
         </div>

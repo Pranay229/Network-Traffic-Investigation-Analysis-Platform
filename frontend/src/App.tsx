@@ -23,11 +23,13 @@ import NetworkScanner from './pages/NetworkScanner';
 import Protocols from './pages/Protocols';
 import { AdminSecurity } from './pages/AdminSecurity';
 import { AuditLogs } from './pages/AuditLogs';
+import ErrorBoundary from './components/ErrorBoundary';
 
 function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <AuthProvider>
         <Routes>
           {/* Legacy Auth Route Redirects */}
           <Route path="/login" element={<Navigate to="/" replace />} />
@@ -70,6 +72,7 @@ function App() {
         </Routes>
       </AuthProvider>
     </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 

@@ -73,7 +73,20 @@ api.interceptors.request.use(
 // ─── Response Interceptors ───────────────────────────────────────────────────
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Detect HTML responses returned by SPA fallback rewrite rules when backend is offline/unreachable
+    if (
+      typeof response.data === 'string' &&
+      (response.data.trim().startsWith('<!doctype') ||
+       response.data.trim().startsWith('<html') ||
+       response.data.includes('<div id="root">'))
+    ) {
+      return Promise.reject(
+        new Error('API request returned HTML instead of JSON. Backend service is offline or unreachable.')
+      );
+    }
+    return response;
+  },
   (error: AxiosError) => Promise.reject(error)
 );
 
@@ -256,7 +269,7 @@ export const uploadPCAP = async (
 
 export const getInvestigations = async (): Promise<Investigation[]> => {
   const res = await api.get('/investigations');
-  return res.data;
+  return Array.isArray(res.data) ? res.data : [];
 };
 
 export const getInvestigation = async (invId: string): Promise<Investigation> => {
@@ -346,7 +359,7 @@ export const getAlerts = async (
   params: { severity?: string; status?: string } = {}
 ): Promise<Alert[]> => {
   const res = await api.get(`/investigations/${invId}/alerts`, { params });
-  return res.data;
+  return Array.isArray(res.data) ? res.data : [];
 };
 
 export const updateAlertStatus = async (
@@ -431,7 +444,7 @@ export const runScan = async (target: string, scan_type: string = 'standard'): P
 
 export const getScans = async (): Promise<ScanRecord[]> => {
   const res = await api.get<ScanRecord[]>('/scans');
-  return res.data;
+  return Array.isArray(res.data) ? res.data : [];
 };
 
 export const getScan = async (scanId: string): Promise<ScanRecord> => {

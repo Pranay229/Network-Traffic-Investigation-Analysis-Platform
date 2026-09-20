@@ -113,14 +113,18 @@ app.add_middleware(CSRFMiddleware)
 
 # ─── CORS Configuration ───────────────────────────────────────────────────────
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=settings.cors_origins_list,
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allow_headers=["Authorization", "Content-Type", "X-CSRF-Token", "Accept"],
-    expose_headers=["X-CSRF-Token"]
-)
+cors_kwargs = {
+    "allow_credentials": True,
+    "allow_methods": ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    "allow_headers": ["Authorization", "Content-Type", "X-CSRF-Token", "Accept"],
+    "expose_headers": ["X-CSRF-Token"],
+}
+if "*" in settings.cors_origins_list:
+    cors_kwargs["allow_origin_regex"] = r"https?://.*"
+else:
+    cors_kwargs["allow_origins"] = settings.cors_origins_list
+
+app.add_middleware(CORSMiddleware, **cors_kwargs)
 
 
 # ─── Routers ──────────────────────────────────────────────────────────────────

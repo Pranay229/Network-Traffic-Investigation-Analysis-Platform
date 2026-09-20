@@ -94,7 +94,14 @@ class Settings(BaseSettings):
         return self.MAX_UPLOAD_SIZE_MB * 1024 * 1024
 
     def tshark_available(self) -> bool:
-        return Path(self.TSHARK_PATH).is_file()
+        if Path(self.TSHARK_PATH).is_file():
+            return True
+        import shutil
+        found = shutil.which("tshark")
+        if found:
+            self.TSHARK_PATH = found
+            return True
+        return False
 
     def ensure_dirs(self) -> None:
         """Create storage directories if they don't exist."""

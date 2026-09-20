@@ -75,6 +75,10 @@ def get_tshark_path() -> Path:
         fallback = Path("/usr/bin/tshark")
         if fallback.is_file():
             return fallback
+        import shutil
+        in_path = shutil.which("tshark")
+        if in_path:
+            return Path(in_path)
         raise FileNotFoundError(
             f"TShark not found at '{settings.TSHARK_PATH}'. "
             "Install Wireshark/TShark or set TSHARK_PATH environment variable."

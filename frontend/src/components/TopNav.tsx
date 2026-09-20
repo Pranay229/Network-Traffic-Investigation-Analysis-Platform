@@ -6,6 +6,7 @@ import {
 import { StatusBadge } from './Badges';
 import { LoadingSpinner } from './UI';
 import { GlobalSearchModal } from './GlobalSearchModal';
+import { ApiConnectModal } from './ApiConnectModal';
 import type { Investigation } from '../types';
 import { getInvestigations, checkHealth } from '../services/api';
 
@@ -18,6 +19,7 @@ export const TopNav: React.FC<TopNavProps> = ({ onMobileMenuToggle }) => {
   const [selected, setSelected] = useState<Investigation | null>(null);
   const [dropOpen, setDropOpen] = useState(false);
   const [searchModalOpen, setSearchModalOpen] = useState(false);
+  const [connectModalOpen, setConnectModalOpen] = useState(false);
   const [backendOk, setBackendOk] = useState<boolean | null>(null);
 
   const navigate = useNavigate();
@@ -310,10 +312,11 @@ export const TopNav: React.FC<TopNavProps> = ({ onMobileMenuToggle }) => {
 
           {/* Backend Status Indicator */}
           <div
+            onClick={() => setConnectModalOpen(true)}
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: 4,
+              gap: 5,
               fontSize: 10.5,
               fontWeight: 600,
               fontFamily: 'JetBrains Mono',
@@ -322,9 +325,11 @@ export const TopNav: React.FC<TopNavProps> = ({ onMobileMenuToggle }) => {
               borderRadius: 4,
               background: backendOk === null ? 'transparent' : backendOk ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)',
               border: `1px solid ${backendOk ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)'}`,
+              cursor: 'pointer',
+              transition: 'all 0.15s ease',
             }}
-            className="hidden sm:flex"
-            title={backendOk ? 'API Server connected and healthy' : 'API Server disconnected'}
+            className="hidden sm:flex hover:brightness-110"
+            title={backendOk ? 'API Server connected (Click to configure)' : 'API Server disconnected (Click to connect)'}
           >
             {backendOk === null ? (
               <LoadingSpinner size={10} />
@@ -374,6 +379,16 @@ export const TopNav: React.FC<TopNavProps> = ({ onMobileMenuToggle }) => {
       <GlobalSearchModal
         isOpen={searchModalOpen}
         onClose={() => setSearchModalOpen(false)}
+      />
+
+      {/* API Connection Modal */}
+      <ApiConnectModal
+        isOpen={connectModalOpen}
+        onClose={() => setConnectModalOpen(false)}
+        onConnected={() => {
+          checkBackend();
+          fetchInvestigations();
+        }}
       />
     </>
   );

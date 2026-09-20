@@ -17,14 +17,56 @@ import type {
   ProtocolAnalysisResponse, TrafficEngineResponse, SecurityEventRecord,
   ARPRecordItem, TLSMetadataItem
 } from '../types';
+export const getApiBaseUrl = (): string => {
+  if (typeof window !== 'undefined') {
+    const custom = localStorage.getItem('nova_custom_api_url');
+    if (custom && custom.trim()) {
+      const c = custom.trim();
+      return c.endsWith('/api') ? c : `${c.replace(/\/+$/, '')}/api`;
+    }
+  }
+  const rawApiEnv = (import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || '').trim();
+  if (rawApiEnv) {
+    return rawApiEnv.endsWith('/api') ? rawApiEnv : `${rawApiEnv.replace(/\/+$/, '')}/api`;
+  }
+  return '/api';
+};
 
-const rawApiEnv = (import.meta.env.VITE_API_URL || import.meta.env.VITE_API_BASE_URL || '').trim();
-const BASE_URL = rawApiEnv
-  ? (rawApiEnv.endsWith('/api') ? rawApiEnv : `${rawApiEnv.replace(/\/+$/, '')}/api`)
-  : '/api';
+export const setCustomApiUrl = (url: string | null) => {
+  if (typeof window !== 'undefined') {
+    if (url && url.trim()) {
+      localStorage.setItem('nova_custom_api_url', url.trim());
+    } else {
+      localStorage.removeItem('nova_custom_api_url');
+    }
+    api.defaults.baseURL = getApiBaseUrl();
+  }
+};
+
+export const testApiUrl = async (candidateUrl: string): Promise<{ ok: boolean; message: string; version?: string; tshark?: boolean }> => {
+  try {
+    const clean = candidateUrl.trim().replace(/\/+$/, '');
+    const target = clean.endsWith('/api') ? `${clean}/health` : `${clean}/api/health`;
+    const res = await axios.get(target, { timeout: 8000 });
+    if (res.data && (res.data.status === 'ok' || res.data.status === 'healthy')) {
+      return {
+        ok: true,
+        message: 'Connected successfully',
+        version: res.data.version,
+        tshark: res.data.tshark_available,
+      };
+    }
+    return { ok: false, message: 'Endpoint reached but returned unexpected response.' };
+  } catch (err: any) {
+    return {
+      ok: false,
+      message: err?.response?.data?.detail || err?.message || 'Connection failed (timeout or network error).',
+    };
+  }
+};
 
 const api: AxiosInstance = axios.create({
-  baseURL: BASE_URL,
+  baseURL: getApiBaseUrl(),
   timeout: 30000,
   withCredentials: true, // Send HttpOnly refresh & CSRF cookies
 });
@@ -58,6 +100,7 @@ export const getCsrfToken = (): string | null => {
 
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
+    config.baseURL = getApiBaseUrl();
     if (inMemoryAccessToken) {
       config.headers.set('Authorization', `Bearer ${inMemoryAccessToken}`);
     }

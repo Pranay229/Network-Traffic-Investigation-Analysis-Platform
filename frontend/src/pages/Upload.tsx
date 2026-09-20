@@ -2,9 +2,10 @@ import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Upload, FileText, CheckCircle2, AlertTriangle, Loader2,
-  Shield, Lock, ArrowRight, HardDrive, FileCode, Check
+  Shield, Lock, ArrowRight, HardDrive, FileCode, Check, Server
 } from 'lucide-react';
 import { SectionHeader, Card, ProgressBar } from '../components/UI';
+import { ApiConnectModal } from '../components/ApiConnectModal';
 import { uploadPCAP, formatBytes } from '../services/api';
 
 type UploadStage = 'idle' | 'uploading' | 'parsing' | 'analyzing' | 'detection' | 'complete' | 'error';
@@ -15,6 +16,7 @@ export const UploadPage: React.FC = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [invId, setInvId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [connectModalOpen, setConnectModalOpen] = useState(false);
   const [dragging, setDragging] = useState(false);
   const navigate = useNavigate();
 
@@ -68,9 +70,10 @@ export const UploadPage: React.FC = () => {
       setTimeout(() => setStage('complete'), 2400);
     } catch (err: any) {
       setStage('error');
+      const is404 = err?.response?.status === 404 || String(err?.message || '').includes('404');
       const isHtmlErr = err?.message?.includes('HTML document instead of JSON') || err?.message?.includes('Network Error');
-      const msg = isHtmlErr
-        ? 'Backend API is unreachable. Please ensure the Python backend service is running and VITE_API_URL is configured in Netlify.'
+      const msg = (is404 || isHtmlErr)
+        ? 'Backend API is unreachable (404 Not Found). The frontend needs to be connected to your Python backend (e.g. on Render).'
         : (err?.response?.data?.detail || err?.message || 'Failed to upload PCAP. Please verify backend server status.');
       setError(typeof msg === 'string' ? msg : JSON.stringify(msg));
     }
@@ -374,7 +377,31 @@ export const UploadPage: React.FC = () => {
             }}
           >
             <AlertTriangle size={16} className="shrink-0 mt-0.5" />
-            <div>{error}</div>
+            <div style={{ flex: 1 }}>
+              <div>{error}</div>
+              {(error.includes('404') || error.includes('unreachable') || error.includes('offline') || error.includes('status code')) && (
+                <button
+                  type="button"
+                  onClick={() => setConnectModalOpen(true)}
+                  style={{
+                    marginTop: 8,
+                    padding: '6px 12px',
+                    borderRadius: 6,
+                    background: 'rgba(6, 182, 212, 0.15)',
+                    border: '1px solid rgba(6, 182, 212, 0.35)',
+                    color: 'var(--accent)',
+                    fontSize: 11.5,
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 6,
+                  }}
+                >
+                  <Server size={13} /> Connect Backend API (Render / Local)
+                </button>
+              )}
+            </div>
           </div>
         )}
 
@@ -389,6 +416,16 @@ export const UploadPage: React.FC = () => {
           </button>
         )}
       </div>
+
+      {/* API Connection Configuration Modal */}
+      <ApiConnectModal
+        isOpen={connectModalOpen}
+        onClose={() => setConnectModalOpen(false)}
+        onConnected={() => {
+          setError(null);
+          setStage('idle');
+        }}
+      />
     </div>
   );
 };

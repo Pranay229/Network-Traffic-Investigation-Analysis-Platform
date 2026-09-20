@@ -164,7 +164,20 @@ async def generic_error_handler(request, exc):
     )
 
 
-# ─── Health Check ─────────────────────────────────────────────────────────────
+# ─── API Root & Health Check ───────────────────────────────────────────────────
+
+@app.get("/api", tags=["System"], include_in_schema=False)
+@app.get("/api/", tags=["System"], include_in_schema=False)
+def api_root():
+    return {
+        "status": "ok",
+        "app": settings.APP_NAME,
+        "version": settings.APP_VERSION,
+        "docs": "/api/docs",
+        "health": "/api/health",
+        "message": f"{settings.APP_NAME} API is running.",
+    }
+
 
 @app.get("/api/health", tags=["System"])
 def health_check():
